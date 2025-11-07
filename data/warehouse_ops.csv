@@ -1,0 +1,5 @@
+process,metric,value,unit
+receiving,dock_utilization,0.82,ratio
+putaway,avg_travel_time,210,seconds
+picking,p95_batch_cycle,18,minutes
+shipping,manifest_accuracy,0.998,ratio

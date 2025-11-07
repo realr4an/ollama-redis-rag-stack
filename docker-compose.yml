@@ -1,0 +1,79 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ''
+      REDIS_INDEX_NAME: warehouse_index
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: llama3
+      LOG_LEVEL: INFO
+    ports:
+      - '8000:8000'
+    depends_on:
+      - redis
+      - ollama
+    volumes:
+      - ./data:/app/data:ro
+      - ./logs:/app/logs
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://backend:8000
+    ports:
+      - '5173:80'
+    depends_on:
+      - backend
+
+  redis:
+    image: redis/redis-stack-server:7.2.0-v10
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+
+  ollama:
+    image: ollama/ollama:latest
+    environment:
+      - OLLAMA_KEEP_ALIVE=5m
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama-data:/root/.ollama
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro
+      - ./infra/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/rag.json:ro
+    depends_on:
+      - backend
+      - loki
+
+  promtail:
+    image: grafana/promtail:3.0.0
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./infra/promtail-config.yml:/etc/promtail/config.yml:ro
+      - ./logs:/var/log/rag
+    depends_on:
+      - backend
+      - loki
+
+  loki:
+    image: grafana/loki:2.9.8
+    ports:
+      - '3100:3100'
+
+volumes:
+  redis-data:
+  ollama-data:
+  grafana-data:

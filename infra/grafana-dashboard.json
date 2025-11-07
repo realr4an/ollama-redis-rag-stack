@@ -1,0 +1,42 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "RAG Requests",
+      "targets": [
+        {
+          "expr": "sum(rag_requests_total)",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Retrieval Latency",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(rag_retrieval_latency_seconds_bucket[5m])) by (le))",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Guard Hits",
+      "targets": [
+        {
+          "expr": "sum(rag_guard_hits_total)",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 }
+    }
+  ],
+  "schemaVersion": 38,
+  "title": "Warehouse RAG Overview"
+}

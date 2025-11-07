@@ -1,0 +1,30 @@
+Metadata-Version: 2.4
+Name: warehouse-rag-backend
+Version: 0.1.0
+Summary: FastAPI backend for the Warehouse Knowledge Assistant
+Author: realr4an
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.110
+Requires-Dist: uvicorn[standard]>=0.24
+Requires-Dist: httpx>=0.26
+Requires-Dist: redis>=5.0
+Requires-Dist: sentence-transformers>=2.6
+Requires-Dist: structlog>=24.1
+Requires-Dist: python-dotenv>=1.0
+Requires-Dist: pydantic-settings>=2.2
+Requires-Dist: pypdf>=4.2
+Requires-Dist: prometheus-client>=0.20
+Requires-Dist: python-multipart>=0.0.9
+Provides-Extra: dev
+Requires-Dist: pytest>=8.2; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23; extra == "dev"
+Requires-Dist: pytest-mock>=3.12; extra == "dev"
+Requires-Dist: httpx>=0.26; extra == "dev"
+Requires-Dist: fakeredis>=2.20; extra == "dev"
+Requires-Dist: ruff>=0.4; extra == "dev"
+Requires-Dist: black>=24.4; extra == "dev"
+
+# Warehouse Knowledge Assistant Backend
+
+FastAPI service that powers ingestion and chat endpoints for the Warehouse Knowledge Assistant. Siehe Root-README für Gesamtüberblick.

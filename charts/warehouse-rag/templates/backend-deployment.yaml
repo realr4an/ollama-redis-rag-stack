@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "warehouse-rag.fullname" . }}-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "warehouse-rag.fullname" . }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ include "warehouse-rag.fullname" . }}-backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: REDIS_HOST
+              value: redis
+            - name: OLLAMA_HOST
+              value: http://ollama:11434
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "warehouse-rag.fullname" . }}-backend
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "warehouse-rag.fullname" . }}-backend
+  ports:
+    - port: 80
+      targetPort: 8000

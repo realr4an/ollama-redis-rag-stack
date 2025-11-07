@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "warehouse-rag.fullname" . }}-redis
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "warehouse-rag.fullname" . }}-redis
+  serviceName: {{ include "warehouse-rag.fullname" . }}-redis
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "warehouse-rag.fullname" . }}-redis
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.redis.image }}
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.redis.storage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "warehouse-rag.fullname" . }}-redis
+spec:
+  selector:
+    app: {{ include "warehouse-rag.fullname" . }}-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
