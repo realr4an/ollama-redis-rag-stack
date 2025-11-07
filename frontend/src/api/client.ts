@@ -21,7 +21,7 @@ async function request<T>(path: string, init?: RequestInit, retries = 2): Promis
   const url = `${API_BASE}${path}`;
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    const timeout = setTimeout(() => controller.abort(), 60000);
     const response = await fetch(url, {
       headers: { 'Content-Type': 'application/json' },
       signal: controller.signal,
