@@ -13,8 +13,34 @@ function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [status, setStatus] = useState<AgentStatus>('idle');
   const [error, setError] = useState<string | null>(null);
-  const [model, setModel] = useState('mistral');
-  const modelOptions = ['mistral', 'llama3', 'phi3', 'gemma'];
+  const modelProfiles = [
+    {
+      value: 'mistral',
+      label: 'Mistral – Balance',
+      description: 'Gute Balance aus Geschwindigkeit und deutschsprachiger Antwortqualität.',
+    },
+    {
+      value: 'phi3',
+      label: 'Phi-3 – Schnell',
+      description: 'Sehr kurze Antwortzeiten, ideal für schnelle Kontrollfragen auf Englisch/Deutsch.',
+    },
+    {
+      value: 'gemma',
+      label: 'Gemma – Präzise',
+      description: 'Stabil für strukturierte Antworten, leicht langsamer als Phi-3.',
+    },
+    {
+      value: 'llama3',
+      label: 'Llama 3 – Höchste Qualität',
+      description: 'Beste kontextuelle Qualität, dafür längere Latenz – perfekt für finale Antworten.',
+    },
+  ];
+  const [model, setModel] = useState(modelProfiles[0].value);
+  const modelOptions = modelProfiles.map(({ value, label }) => ({ value, label }));
+  const activeModelProfile = useMemo(
+    () => modelProfiles.find((profile) => profile.value === model) ?? modelProfiles[0],
+    [model]
+  );
 
   useEffect(() => {
     document.body.classList.toggle('light', theme === 'light');
@@ -97,6 +123,30 @@ function App() {
         </section>
         <aside style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <SourceDrawer sources={latestSources} />
+          <div
+            style={{
+              border: '1px solid var(--color-border)',
+              borderRadius: '0.8rem',
+              padding: '1rem',
+              background: 'var(--color-card)'
+            }}
+          >
+            <h3 style={{ marginTop: 0 }}>Modell-Guide</h3>
+            <strong>{activeModelProfile.label}</strong>
+            <p style={{ margin: '0.2rem 0 0.6rem', fontSize: '0.85rem', opacity: 0.9 }}>
+              {activeModelProfile.description}
+            </p>
+            <details style={{ fontSize: '0.8rem' }}>
+              <summary style={{ cursor: 'pointer' }}>Alle Modelle</summary>
+              <ul>
+                {modelProfiles.map((profile) => (
+                  <li key={profile.value}>
+                    <strong>{profile.label}:</strong> {profile.description}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </div>
           <div
             style={{
               border: '1px dashed var(--color-border)',

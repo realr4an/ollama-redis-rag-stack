@@ -1,6 +1,11 @@
+type ModelOption = {
+  value: string;
+  label: string;
+};
+
 interface Props {
   value: string;
-  options: string[];
+  options: ModelOption[];
   onChange: (value: string) => void;
 }
 
@@ -20,8 +25,8 @@ export function ModelSelector({ value, options, onChange }: Props) {
         }}
       >
         {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+          <option key={option.value} value={option.value}>
+            {option.label}
           </option>
         ))}
       </select>
