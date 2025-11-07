@@ -23,6 +23,11 @@ export function MessageList({ messages }: Props) {
             {message.role.toUpperCase()}
           </div>
           <div style={{ whiteSpace: 'pre-wrap' }}>{message.content}</div>
+          {message.meta && message.meta.model && (
+            <div style={{ marginTop: '0.4rem', fontSize: '0.75rem', opacity: 0.7 }}>
+              Modell: {String(message.meta.model)}
+            </div>
+          )}
           {message.sources && message.sources.length > 0 && (
             <div style={{ marginTop: '0.6rem', fontSize: '0.8rem' }}>
               Sources: {message.sources.map((src) => src.document_id).join(', ')}

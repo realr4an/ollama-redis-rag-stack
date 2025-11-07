@@ -12,6 +12,7 @@
   - Guard-Hits > 5% der Requests (Prompt-Angriffe)
   - p95 Retrieval-Latenz > 1s
   - Fehlende Ingestion-Events > 1h (Daten-Drift)
+- **Eval & Regression**: `scripts/eval_rag.py` automatisiert Smoke-Checks gegen definierte Fragen.
 
 ## Scaling Guidelines
 - **Backend**: Stateless → horizontale Skalierung; Embedding-Model Cache warmhalten.
@@ -30,3 +31,4 @@
 - [ ] Seed-Daten ingestiert (`/ingest`).
 - [ ] Tests & Lints grün (lokal + CI).
 - [ ] Observability Dashboards provisioniert.
+- [ ] Taskfile/CI-Pipelines auf Zielumgebung abgestimmt (z.B. Azure Login, Helm Deploy).

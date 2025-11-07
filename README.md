@@ -30,7 +30,7 @@ flowchart LR
 ## Features
 - **Backend**: FastAPI mit `/health`, `/ingest`, `/chat`, strukturiertes Logging (structlog), Prometheus-Metriken, Prompt-Injection-Guards, PII-Redaction, Audit-Log.
 - **Vector Store**: Redis-Stack (HNSW Index) mit Namespace-Management und automatischem Index-Aufbau.
-- **LLM-Orchestrierung**: Sentence-Transformers `all-MiniLM-L6-v2` für Embeddings, Ollama (z.B. `llama3`) für die Antwortgenerierung.
+- **LLM-Orchestrierung**: Sentence-Transformers `all-MiniLM-L6-v2` für Embeddings, Ollama (Default `mistral`, per Request umschaltbar auf `llama3`, `phi3`, `gemma`) inkl. Temperatursteuerung.
 - **Frontend**: React + Vite Chat-UI mit Agent-Status, Dark/Light Mode, Quellenanzeige, Retry-/Timeout-Handling.
 - **Infra & DevOps**: Docker Compose Stack (FastAPI, Redis, Ollama, Frontend, Promtail, Grafana), Helm Chart Skeleton, GitHub Actions CI, k6 Performance-Skript.
 - **Daten & Security**: Seed-Daten (`data/warehouse_faq.md`, `data/warehouse_ops.csv`), Prompt-Guards, Audit-Log, `.env` Handling.
@@ -94,6 +94,19 @@ k6 run scripts/k6-load.js
 ```
 Ziel: p95 < 1s bei 10 VUs (simuliert ~3M Token/Tag bei Skalierung).
 
+### RAG Smoke-Eval
+```bash
+./scripts/eval_rag.py --api-base http://localhost:8000
+```
+Erzeugt Keyword-Hitrates für die enthaltenen Warehouse-Fragen.
+
+### Taskfile (Alternative zu Make)
+```bash
+task install:backend
+task test:frontend
+task compose:up
+```
+
 ### Helm (optional)
 ```bash
 helm install warehouse charts/warehouse-rag --namespace rag --create-namespace
@@ -110,6 +123,7 @@ Passe `values.yaml` an (Images, Service-Typ, Ressourcen).
 ## Dokumentation
 - `docs/architecture.md`: Komponenten- & Sequenzdiagramm, Datenfluss.
 - `docs/operations.md`: Deploy-, Monitoring- & Cost-Guides.
+- `docs/cloud-deployment.md`: Azure Container Apps / AKS Playbook.
 
 ## Business Use-Cases
 - Warehouse FAQs (Inbound/Outbound KPIs, SOPs)
@@ -122,5 +136,12 @@ Passe `values.yaml` an (Images, Service-Typ, Ressourcen).
 - Alerting Rules für Guard-Hits > Schwelle
 - Browser-Plugin (Skeleton vorhanden in Planung)
 - Erweiterte Telemetrie via OpenTelemetry Collector
+- Augmentiertes Guard-Playbook für mehrsprachige Prompts
+
+## Fit für PRODYNA / AI Software Engineer
+- **End-to-End Ownership**: Backend, Frontend, Infra, Observability & CI/CD spiegeln den geforderten Full-Lifecycle-Anspruch wider.
+- **Generative KI Patterns**: RAG, Guardrails, Multi-Model-Steuerung, Evaluation-Skript & Performance-Tests demonstrieren praktische Erfahrung.
+- **Cloud & DevOps**: Compose, Helm, Azure Playbook, Taskfile und GitHub Actions adressieren Automatisierung & Cloud-Readiness.
+- **Collaboration Ready**: Strukturierte Doku, Guard-/Security-Hinweise und Tests erleichtern die Zusammenarbeit mit Data Scientists & Engineers.
 
 Lizenz: [MIT](LICENSE)

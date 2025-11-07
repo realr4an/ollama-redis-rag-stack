@@ -46,6 +46,8 @@ class ChatRequest(BaseModel):
     namespace: str | None = None
     top_k: int | None = None
     guard_level: str | None = Field(default="standard", description="standard|strict|disabled")
+    model: str | None = Field(default=None, description="Override default Ollama model")
+    temperature: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class ChatResponse(BaseModel):

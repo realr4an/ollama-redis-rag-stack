@@ -1,0 +1,38 @@
+version: '3'
+
+tasks:
+  install:backend:
+    cmds:
+      - cd backend && pip install -U pip && pip install -e .[dev]
+    desc: Install backend dependencies
+
+  install:frontend:
+    cmds:
+      - cd frontend && corepack pnpm install
+    desc: Install frontend deps
+
+  test:backend:
+    cmds:
+      - cd backend && pytest
+    desc: Run backend tests
+
+  test:frontend:
+    cmds:
+      - cd frontend && corepack pnpm test
+    desc: Run frontend unit tests
+
+  lint:
+    cmds:
+      - cd backend && ruff check && black --check app tests
+      - cd frontend && corepack pnpm lint
+    desc: Run linters for backend and frontend
+
+  compose:up:
+    cmds:
+      - docker compose up --build
+    desc: Start full stack via Docker Compose
+
+  compose:down:
+    cmds:
+      - docker compose down -v
+    desc: Tear down stack and volumes

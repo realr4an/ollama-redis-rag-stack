@@ -20,6 +20,11 @@ export function SourceDrawer({ sources }: Props) {
         {sources.map((source, idx) => (
           <div key={source.document_id + idx}>
             <strong>[S{idx + 1}] {source.document_id}</strong>
+            {source.score !== undefined && (
+              <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', opacity: 0.7 }}>
+                score: {source.score.toFixed(3)}
+              </span>
+            )}
             <p style={{ margin: '0.3rem 0', fontSize: '0.9rem' }}>{source.text}</p>
             {source.metadata && (
               <small style={{ opacity: 0.7 }}>meta: {JSON.stringify(source.metadata)}</small>

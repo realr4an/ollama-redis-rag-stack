@@ -5,6 +5,7 @@ import { MessageList } from './components/MessageList';
 import { SourceDrawer } from './components/SourceDrawer';
 import { StatusPill } from './components/StatusPill';
 import { ThemeToggle } from './components/ThemeToggle';
+import { ModelSelector } from './components/ModelSelector';
 import type { AgentStatus, ChatMessage } from './types/chat';
 
 function App() {
@@ -12,6 +13,8 @@ function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [status, setStatus] = useState<AgentStatus>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [model, setModel] = useState('mistral');
+  const modelOptions = ['mistral', 'llama3', 'phi3', 'gemma'];
 
   useEffect(() => {
     document.body.classList.toggle('light', theme === 'light');
@@ -35,12 +38,13 @@ function App() {
 
       try {
         setStatus('generating');
-        const response = await sendChatRequest({ query: content });
+        const response = await sendChatRequest({ query: content, model });
         const assistantMessage: ChatMessage = {
           id: crypto.randomUUID(),
           role: 'assistant',
           content: response.answer,
-          sources: response.sources
+          sources: response.sources,
+          meta: response.stats
         };
         setMessages((prev) => [...prev, assistantMessage]);
         setStatus('idle');
@@ -64,6 +68,7 @@ function App() {
         </div>
         <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
           <StatusPill status={status} />
+          <ModelSelector value={model} options={modelOptions} onChange={setModel} />
           <ThemeToggle theme={theme} onToggle={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))} />
         </div>
       </header>

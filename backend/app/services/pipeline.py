@@ -6,6 +6,7 @@ from typing import Any
 
 from ..instrumentation import (
     LLM_LATENCY,
+    MODEL_USAGE_COUNTER,
     PROMPT_GUARD_COUNTER,
     REQUEST_COUNTER,
     RETRIEVAL_LATENCY,
@@ -37,7 +38,14 @@ class RagPipeline:
         self.redactor = redactor
         self.max_context_chars = max_context_chars
 
-    async def chat(self, request: ChatRequest, namespace: str) -> ChatResponse:
+    async def chat(
+        self,
+        request: ChatRequest,
+        namespace: str,
+        *,
+        model: str,
+        temperature: float,
+    ) -> ChatResponse:
         guard_level = request.guard_level or "standard"
         guard_result = self.guard.check(request.query, guard_level)
         if not guard_result.allowed:
@@ -60,9 +68,10 @@ class RagPipeline:
 
         prompt = self._build_prompt(request.query, chunks)
         start_llm = perf_counter()
-        llm_payload = await self.llm.generate(prompt)
+        llm_payload = await self.llm.generate(prompt, model=model, temperature=temperature)
         LLM_LATENCY.observe(perf_counter() - start_llm)
         REQUEST_COUNTER.labels(status="success").inc()
+        MODEL_USAGE_COUNTER.labels(model=model).inc()
 
         answer = llm_payload.get("response") or llm_payload.get("message", {}).get("content", "")
         redacted_answer = self.redactor.redact(answer)
@@ -84,6 +93,7 @@ class RagPipeline:
             stats={
                 "tokens_context": len(prompt) // 4,
                 "prompt_guard": guard_result.reasons,
+                "model": model,
             },
         )
 

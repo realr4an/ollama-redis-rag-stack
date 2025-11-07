@@ -14,8 +14,19 @@ class OllamaClient:
         self.timeout = timeout
         self._client = httpx.AsyncClient(timeout=self.timeout)
 
-    async def generate(self, prompt: str) -> dict[str, Any]:
-        payload = {"model": self.model, "prompt": prompt, "stream": True}
+    async def generate(
+        self,
+        prompt: str,
+        model: str | None = None,
+        temperature: float | None = None,
+    ) -> dict[str, Any]:
+        payload = {
+            "model": model or self.model,
+            "prompt": prompt,
+            "stream": True,
+        }
+        if temperature is not None:
+            payload["temperature"] = temperature
         url = f"{self.base_url}/api/generate"
         async with self._client.stream("POST", url, json=payload) as response:
             response.raise_for_status()

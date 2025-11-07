@@ -1,0 +1,14 @@
+[
+  {
+    "query": "Wie hoch ist der maximale Durchsatz pro Dock?",
+    "keywords": ["220", "Paletten", "Dock"]
+  },
+  {
+    "query": "Welche Lagerzonen sind temperaturgeführt?",
+    "keywords": ["C1", "C3", "F1", "F2"]
+  },
+  {
+    "query": "Wie wird die Kommissionierpriorität bestimmt?",
+    "keywords": ["FIFO", "Wave", "Expedite"]
+  }
+]

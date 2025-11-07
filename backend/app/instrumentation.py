@@ -21,3 +21,9 @@ PROMPT_GUARD_COUNTER = Counter(
     "Number of times prompt guard blocked or flagged input",
     labelnames=("action",),
 )
+
+MODEL_USAGE_COUNTER = Counter(
+    "rag_model_usage_total",
+    "How often each model is used for chat responses",
+    labelnames=("model",),
+)

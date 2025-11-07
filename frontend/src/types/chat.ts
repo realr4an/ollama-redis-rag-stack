@@ -12,6 +12,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
   sources?: SourceChunk[];
+  meta?: Record<string, unknown>;
 }
 
 export interface ChatRequestPayload {
@@ -19,6 +20,8 @@ export interface ChatRequestPayload {
   namespace?: string;
   top_k?: number;
   guard_level?: 'standard' | 'strict' | 'disabled';
+  model?: string;
+  temperature?: number;
 }
 
 export interface ChatResponsePayload {

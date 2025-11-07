@@ -5,7 +5,7 @@ from pathlib import Path
 
 import redis
 import structlog
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import PlainTextResponse
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
@@ -131,7 +131,11 @@ async def chat(
     settings: Settings = Depends(get_settings_dependency),
 ) -> ChatResponse:
     namespace = payload.namespace or settings.ingestion_namespace
-    response = await pipeline.chat(payload, namespace)
+    model = payload.model or settings.ollama_model
+    if model not in settings.ollama_allowed_models:
+        raise HTTPException(status_code=400, detail="Unsupported model requested")
+    temperature = payload.temperature if payload.temperature is not None else settings.ollama_temperature
+    response = await pipeline.chat(payload, namespace, model=model, temperature=temperature)
 
     audit: AuditTrail = request.app.state.audit
     audit.write(
