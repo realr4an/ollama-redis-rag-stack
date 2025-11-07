@@ -135,7 +135,12 @@ async def chat(
     if model not in settings.ollama_allowed_models:
         raise HTTPException(status_code=400, detail="Unsupported model requested")
     temperature = payload.temperature if payload.temperature is not None else settings.ollama_temperature
-    response = await pipeline.chat(payload, namespace, model=model, temperature=temperature)
+    try:
+        response = await pipeline.chat(payload, namespace, model=model, temperature=temperature)
+    except TimeoutError:
+        raise HTTPException(status_code=504, detail="LLM generation timed out")
+    except RuntimeError as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
 
     audit: AuditTrail = request.app.state.audit
     audit.write(

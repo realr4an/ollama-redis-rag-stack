@@ -68,7 +68,14 @@ class RagPipeline:
 
         prompt = self._build_prompt(request.query, chunks)
         start_llm = perf_counter()
-        llm_payload = await self.llm.generate(prompt, model=model, temperature=temperature)
+        try:
+            llm_payload = await self.llm.generate(prompt, model=model, temperature=temperature)
+        except TimeoutError:
+            REQUEST_COUNTER.labels(status="llm_timeout").inc()
+            raise
+        except Exception:
+            REQUEST_COUNTER.labels(status="llm_error").inc()
+            raise
         LLM_LATENCY.observe(perf_counter() - start_llm)
         REQUEST_COUNTER.labels(status="success").inc()
         MODEL_USAGE_COUNTER.labels(model=model).inc()

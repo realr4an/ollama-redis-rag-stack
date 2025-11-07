@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
     ollama_host: str = Field(default="http://localhost:11434")
     ollama_model: str = Field(default="mistral")
-    ollama_timeout: int = Field(default=60)
+    ollama_timeout: int = Field(default=120)
     ollama_temperature: float = Field(default=0.2)
     ollama_allowed_models: tuple[str, ...] = Field(
         default=("mistral", "llama3", "phi3", "gemma")
