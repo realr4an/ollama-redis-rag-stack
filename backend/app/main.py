@@ -32,7 +32,7 @@ def get_settings_dependency() -> Settings:  # pragma: no cover - tiny wrapper
 
 
 @asynccontextmanager
-def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI):
     settings = get_settings()
     configure_logging(settings.log_level)
     logger.info("starting_app", env=settings.environment)

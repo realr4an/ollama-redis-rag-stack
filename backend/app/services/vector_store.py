@@ -65,8 +65,9 @@ class RedisVectorStore:
         return len(documents)
 
     def similarity_search(self, *, namespace: str, vector: list[float], top_k: int) -> list[dict]:
+        namespace_tag = self._escape_tag(namespace)
         query = Query(
-            f"(@namespace:{{{namespace}}})=>[KNN {top_k} @{self.vector_field} $vec AS score]"
+            f"(@namespace:{{{namespace_tag}}})=>[KNN {top_k} @{self.vector_field} $vec AS score]"
         ).return_fields("text", "metadata", "score")
         params = {"vec": self._to_bytes(vector)}
         results = self.client.ft(self.index_name).search(query, query_params=params)
@@ -93,3 +94,6 @@ class RedisVectorStore:
         import array
 
         return array.array("f", vector).tobytes()
+
+    def _escape_tag(self, value: str) -> str:
+        return value.replace("-", r"\-")

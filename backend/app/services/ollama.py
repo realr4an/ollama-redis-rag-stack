@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import json
+
 import httpx
 
 
@@ -13,11 +15,21 @@ class OllamaClient:
         self._client = httpx.AsyncClient(timeout=self.timeout)
 
     async def generate(self, prompt: str) -> dict[str, Any]:
-        payload = {"model": self.model, "prompt": prompt}
-        response = await self._client.post(f"{self.base_url}/api/generate", json=payload)
-        response.raise_for_status()
-        data = response.json()
-        return data
+        payload = {"model": self.model, "prompt": prompt, "stream": True}
+        url = f"{self.base_url}/api/generate"
+        async with self._client.stream("POST", url, json=payload) as response:
+            response.raise_for_status()
+            chunks: list[str] = []
+            meta: dict[str, Any] = {}
+            async for line in response.aiter_lines():
+                if not line:
+                    continue
+                data = json.loads(line)
+                if data.get("done"):
+                    meta = data
+                    break
+                chunks.append(data.get("response", ""))
+            return {"response": "".join(chunks), "meta": meta}
 
     async def aclose(self) -> None:
         await self._client.aclose()

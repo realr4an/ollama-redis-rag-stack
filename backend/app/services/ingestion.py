@@ -12,14 +12,23 @@ from ..schemas import IngestDocument
 
 class DocumentParser:
     def __init__(self, base_path: Path | None = None):
-        self.base_path = base_path or Path.cwd()
+        self.base_path = (base_path or Path.cwd()).resolve()
 
     def load(self, doc: IngestDocument) -> str:
         if doc.text:
             return doc.text
         if not doc.path:
             raise ValueError("Document missing both text and path")
-        file_path = (self.base_path / doc.path).resolve()
+
+        provided_path = Path(doc.path)
+        if provided_path.is_absolute():
+            file_path = provided_path
+        else:
+            relative_parts = provided_path.parts
+            if relative_parts and relative_parts[0] == self.base_path.name:
+                relative_parts = relative_parts[1:]
+            file_path = self.base_path.joinpath(*relative_parts)
+        file_path = file_path.resolve()
         if not file_path.exists():
             raise FileNotFoundError(file_path)
         mime = doc.mime_type or file_path.suffix.lower()
