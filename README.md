@@ -138,10 +138,4 @@ Passe `values.yaml` an (Images, Service-Typ, Ressourcen).
 - Erweiterte Telemetrie via OpenTelemetry Collector
 - Augmentiertes Guard-Playbook für mehrsprachige Prompts
 
-## Fit für PRODYNA / AI Software Engineer
-- **End-to-End Ownership**: Backend, Frontend, Infra, Observability & CI/CD spiegeln den geforderten Full-Lifecycle-Anspruch wider.
-- **Generative KI Patterns**: RAG, Guardrails, Multi-Model-Steuerung, Evaluation-Skript & Performance-Tests demonstrieren praktische Erfahrung.
-- **Cloud & DevOps**: Compose, Helm, Azure Playbook, Taskfile und GitHub Actions adressieren Automatisierung & Cloud-Readiness.
-- **Collaboration Ready**: Strukturierte Doku, Guard-/Security-Hinweise und Tests erleichtern die Zusammenarbeit mit Data Scientists & Engineers.
-
 Lizenz: [MIT](LICENSE)
